@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended:false}))
 
 
 const corsOptions = {
-   origin:[process.env.ORIGIN],
+   origin:["https://www.biblebytes-web.onrender.com", 'https://biblebytes.org', process.env.ORIGIN],
    credentials:true,
    optionSuccessStatus:200,
    methods: ["GET", "POST", "PUT", "DELETE"],
