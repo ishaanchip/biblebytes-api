@@ -38,11 +38,25 @@ const commentaryTemplateSchema = new Schema({
       }
 })
 
+const chapterOverviewsSchema = new Schema({
+  version: {
+    type:String,
+    required:true,
+  },
+  books:{
+    type:Object,
+    default: {}
+  },
+
+})
+
 const clientAccounts = mongoose.model('client_accounts', clientAccountSchema, 'client_accounts');
 
 const commentaryTemplate = mongoose.model('commentaries', commentaryTemplateSchema, 'commentaries');
 
+const chapterOverviewTemplate = mongoose.model('chapter_overviews', chapterOverviewsSchema, 'chapter_overviews')
 
-const mySchemas = {'clientAccounts':clientAccounts, 'commentaryTemplate':commentaryTemplate}
+
+const mySchemas = {'clientAccounts':clientAccounts, 'commentaryTemplate':commentaryTemplate, 'chapterOverviewTemplate':chapterOverviewTemplate}
 
 module.exports = mySchemas;
