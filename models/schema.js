@@ -32,6 +32,10 @@ const commentaryTemplateSchema = new Schema({
         type:String,
         default:"",
       },
+      img_attributions:{
+        type:String,
+        default:"",
+      },
       create_date: {
         type: Date,
         default: Date.now
