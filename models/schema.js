@@ -1,3 +1,4 @@
+const { Int32 } = require('mongodb');
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
@@ -51,7 +52,30 @@ const chapterOverviewsSchema = new Schema({
     type:Object,
     default: {}
   },
+  total_fetched_chapters: {
+    type:Int32,
+    default:0
+  }
 
+})
+
+const connectionSchema = new Schema({
+  content:{
+    type:Object,
+    required:true
+  },
+  name:{
+    type:String,
+    default:"CONNECTION #X"
+  },
+  plays:{
+    type:Int32,
+    default:0
+  },
+  current_connection:{
+    type:Boolean,
+    default:false
+  }
 })
 
 const clientAccounts = mongoose.model('client_accounts', clientAccountSchema, 'client_accounts');
@@ -60,7 +84,14 @@ const commentaryTemplate = mongoose.model('commentaries', commentaryTemplateSche
 
 const chapterOverviewTemplate = mongoose.model('chapter_overviews', chapterOverviewsSchema, 'chapter_overviews')
 
+const connectionTemplate = mongoose.model('connections', connectionSchema, 'connections')
 
-const mySchemas = {'clientAccounts':clientAccounts, 'commentaryTemplate':commentaryTemplate, 'chapterOverviewTemplate':chapterOverviewTemplate}
+
+const mySchemas = {
+  'clientAccounts':clientAccounts,
+  'commentaryTemplate':commentaryTemplate,
+  'chapterOverviewTemplate':chapterOverviewTemplate,
+  'connectionTemplate':connectionTemplate
+}
 
 module.exports = mySchemas;

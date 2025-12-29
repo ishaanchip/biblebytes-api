@@ -16,11 +16,16 @@ const schemas = require("../models/schema");
             //1. call AO bible API
             const result = await axios.get(`https://bible.helloao.org/api/${bibleTranslation}/${bibleBook}/${bibleChapter}.json`)
 
-            //2. return the data
+            //2. increment how many chapters fetched
+            const chapterOverviewQuery = schemas.chapterOverviewTemplate
+            await chapterOverviewQuery.updateOne({'version':"BSB"}, {$inc: {'total_fetched_chapters': 1}})
+
+            //3. return the data
             if (result) {
                 //console.log("bible chapter successfully fetched!");
                 return res.status(200).json({bibleData: result.data });
-              } else {
+              } 
+            else {
                 console.error("Failed to fetch bible data.");
                 return res.status(400).json({ error: "Failed to fetch bible data." });
             }
@@ -126,7 +131,7 @@ const schemas = require("../models/schema");
     })
 
 
-    //POST [retrieving chapter of commentary series]
+    //PUT [retrieving chapter of commentary series]
     router.put('/retrieve-commentary-chapter', async(req, res) =>{
         try{
             //0. base variables
@@ -145,12 +150,76 @@ const schemas = require("../models/schema");
 
         }
         catch(err){
-            console.log(`there was a backend error posting commentary chapters: ${err}`)
+            console.log(`there was a backend error retrieving commentary chapters: ${err}`)
             return res.status(500).json({ error: "Internal server error" });
         }
     })
 
+//CONNECTION ROUTES
 
+    //GET [retrieving current connection game]
+    router.get('/retrieve-current-connection', async(req, res) =>{
+        try{
+            //0. base variables
+            const connectionQuery = schemas.connectionTemplate
+
+            //1. fetching current connection
+            const result = await connectionQuery.findOne(
+                {current_connection: true},
+                )
+
+            //2. found connection
+            if (result){
+                res.status(200).json({connectionObject: result})
+            }
+            //3. connection not found 
+            else{
+                res.status(200).json({connectionObject: {}})
+            }
+
+
+        }
+        catch(err){
+            console.log(`there was a backend error retrieving connection game : ${err}`)
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    })
+
+    //PUT [incrementing connection plays]
+    router.put('/increment-connection-plays', async(req, res) =>{
+        try{
+            //0. base variables
+            const connectionQuery = schemas.connectionTemplate
+
+            //1. incrementinig connection in mongodb
+            const result  = await connectionQuery.updateOne({current_connection:true}, {$inc: {plays: 1}})
+            console.log('incremented connection plays ! ! !')
+
+        }
+        catch(err){
+            console.log(`there was a backend error posting connection template: ${err}`)
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    })
+
+    //POST [creating connection game]
+    router.post('/create-connection-game', async(req, res) =>{
+        try{
+            //0. base variables
+            const connectionQuery = schemas.connectionTemplate
+            const {connectionToInsert} = req.body;
+
+            //1. creating connection in mongodb
+            const newConnectionTemplate =  new connectionQuery(connectionToInsert)
+            const result = await newConnectionTemplate.save()
+            console.log('template made ! ! !')
+
+        }
+        catch(err){
+            console.log(`there was a backend error posting connection template: ${err}`)
+            return res.status(500).json({ error: "Internal server error" });
+        }
+    })
 
 
 
